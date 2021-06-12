@@ -1,10 +1,10 @@
 .board{
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: auto;
-    width: auto;
+    flex-direction: column;
     outline: 1px solid rgb(0, 195, 255);
+}
+.row{
+    display: flex;
 }
 
 .cell{

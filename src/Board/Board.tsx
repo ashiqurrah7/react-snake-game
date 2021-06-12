@@ -26,15 +26,17 @@ class LinkedList{
 export const Board = () => {
 
     const [board, setboard] = useState(createBoard(BOARD_SIZE));
+    const [snakeCells, setSnakeCells] = useState(new Set([51]));
+    const [snake, setSnake] = useState(new LinkedList(51));
 
     return (
         <div className="board">
             {
                 board.map((row, rowIdx) => 
                     <div key={rowIdx} className="row">
-                        {row.map((cellIdx) => 
-                            <div key={cellIdx} className={`cell  ${false? 'snake-cell' : ''}`}>
-                                {cellIdx}
+                        {row.map((cellValue,cellIdx) => 
+                            <div key={cellIdx} className={`cell  ${snakeCells.has(cellValue)? 'snake-cell' : ''}`}>
+                                {cellValue}
                             </div>
                         )
                         }
