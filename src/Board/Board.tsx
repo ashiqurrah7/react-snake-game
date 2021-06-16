@@ -48,6 +48,8 @@ export const Board = () => {
     const [snakeCells, setSnakeCells] = useState(new Set([51]));
     const [snake, setSnake] = useState(new LinkedList({row: 5, col :0, cell: 51}));
     const [direction, setDirection]  = useState <string>(Direction.RIGHT);
+    const [foodCell, setFoodCell] = useState(snake.head.val.cell + 5);
+    const [score, setScore] = useState(0);
 
     useEffect(() =>{
         window.addEventListener('keydown', e =>{
@@ -57,12 +59,24 @@ export const Board = () => {
         })
     },[]);
 
+    const handleFoodConsumption = () => {
+        const maxFoodCellValue = BOARD_SIZE * BOARD_SIZE;
+        let nextfoodCell: number;
+        while(true){
+            nextfoodCell = randomIntFromRange(1, maxFoodCellValue)
+            if(snakeCells.has(nextfoodCell) || foodCell ===nextfoodCell) continue;
+            break;
+        }
+        setScore((prev)=> prev+100);
+        setFoodCell(nextfoodCell);
+    }
+
     function moveSnake(){
         const currentHeadCoords = {
             row : snake.head.val.row,
             col : snake.head.val.col,
         };
-        console.log("moving");
+        console.log(direction);
 
         const nextHeadCoords = getCoordsInDirection(currentHeadCoords, direction);
         const nextHeadCell = board[nextHeadCoords.row][nextHeadCoords.col];
@@ -84,31 +98,26 @@ export const Board = () => {
         if(snake.tail.next !== null) snake.tail = snake.tail.next;
         else snake.tail = snake.head;
         
+        const foodConsumed = nextHeadCell === foodCell;
+        if (foodConsumed) handleFoodConsumption();
+        
+
         setSnakeCells(newSnakeCells);
     }
 
-    // const handleMove = () =>{
-    //     var move =  setInterval(()=>setSnakeCells((prev) => {
-    //         let newVal = prev.values().next().value+1;
-    //         if (newVal>100){
-    //             newVal=1;
-    //         }   
-    //         return new Set([newVal]);
-    //     }), 500)
-    //     if(moving){
-    //         console.log("stopping");
-    //         clearInterval(move);
-    //     }
-    //     setMoving((prev)=>!prev);
-    // }
     return (
         <div>
+            <div className="score">
+                <h1>Score: {score}</h1>
+            </div>
             <div className="board">
             {
                 board.map((row, rowIdx) => 
                     <div key={rowIdx} className="row">
                         {row.map((cellValue,cellIdx) => 
-                            <div key={cellIdx} className={`cell  ${snakeCells.has(cellValue)? 'snake-cell' : ''}`}>
+                            <div key={cellIdx} className={`cell  
+                            ${snakeCells.has(cellValue)? 'snake-cell' : ''}  
+                            ${foodCell == cellValue? 'food-cell' : ''}`}>
                                 {cellValue}
                             </div>
                         )
@@ -117,7 +126,7 @@ export const Board = () => {
                 )
             }
         </div>
-            <div style={{marginTop:'10px', display:'flex', justifyContent:'space-evenly'}}>
+            <div className="buttons">
                 <button onClick={moveSnake} > move</button>
                 </div>
         </div>
@@ -175,3 +184,7 @@ const getCoordsInDirection = (coords :ICoords, direction : string) =>{
         col : coords.col
     };
 };
+
+const randomIntFromRange = (min: number, max:number)=>{
+    return Math.floor(Math.random() * (max - min + 1) +min);
+}

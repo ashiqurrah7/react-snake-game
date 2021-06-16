@@ -24,3 +24,15 @@
 .food-cell{
     background-color: rgb(255, 32, 32);
 }
+
+.buttons{
+    margin-top:10px;
+    display:flex;
+    justify-content:space-evenly;
+}
+
+.score{
+    color: aliceblue;
+    text-align: center;
+    font-family:'Comic Sans MS';
+}
