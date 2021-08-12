@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import './board.css'
 
-const BOARD_SIZE: number = 10;
+const BOARD_SIZE: number = 15;
 
 interface IVal{
     row : number,
@@ -45,11 +45,12 @@ enum Direction {
 export const Board = () => {
 
     const [board, setboard] = useState(createBoard(BOARD_SIZE));
-    const [snakeCells, setSnakeCells] = useState(new Set([51]));
-    const [snake, setSnake] = useState(new LinkedList({row: 5, col :0, cell: 51}));
+    const [snakeCells, setSnakeCells] = useState(new Set([106]));
+    const [snake, setSnake] = useState(new LinkedList({row: 7, col :0, cell: 106}));
     const [direction, setDirection]  = useState <string>(Direction.RIGHT);
     const [foodCell, setFoodCell] = useState(snake.head.val.cell + 5);
     const [score, setScore] = useState(0);
+    const [isGameOver, setIsGameOver] = useState(false);
 
     useEffect(() =>{
         window.addEventListener('keydown', e =>{
@@ -57,6 +58,7 @@ export const Board = () => {
             const isValidDirection = newDirection !== '';
             if(isValidDirection) setDirection(newDirection);
         })
+        // setInterval(moveSnake, 500);
     },[]);
 
     const handleFoodConsumption = () => {
@@ -71,6 +73,12 @@ export const Board = () => {
         setFoodCell(nextfoodCell);
     }
 
+    const isOutOfBounds = (coords : ICoords, board: number[][]) => {
+        if (coords.row < 0 || coords.col < 0) return true;
+        if (coords.row >=board.length || coords.col >= board[0].length ) return true;
+        return false;
+    }
+
     function moveSnake(){
         const currentHeadCoords = {
             row : snake.head.val.row,
@@ -79,7 +87,9 @@ export const Board = () => {
         console.log(direction);
 
         const nextHeadCoords = getCoordsInDirection(currentHeadCoords, direction);
+        if (isOutOfBounds(nextHeadCoords, board)) handleGameOver();
         const nextHeadCell = board[nextHeadCoords.row][nextHeadCoords.col];
+        if (snakeCells.has(nextHeadCell)) handleGameOver();
         const newHead = new Node(
             {
                 row: nextHeadCoords.row,
@@ -97,18 +107,38 @@ export const Board = () => {
     
         if(snake.tail.next !== null) snake.tail = snake.tail.next;
         else snake.tail = snake.head;
-        
-        const foodConsumed = nextHeadCell === foodCell;
-        if (foodConsumed) handleFoodConsumption();
-        
-
         setSnakeCells(newSnakeCells);
+        const foodConsumed = nextHeadCell === foodCell;
+        if (foodConsumed) {
+            // growSnake();
+            handleFoodConsumption();
+        };
+    }
+
+    const growSnake = () => {
+        const growthCoords = getGrowthCoords(snake.tail, direction);
+        if(isOutOfBounds(growthCoords, board)){
+            return;
+        }
+        const newTailCell = board[growthCoords.row][growthCoords.col];
+        const newTailNode = new Node({row:growthCoords.row, col:growthCoords.col, cell:newTailCell});
+        const currTail = snake.tail;
+        snake.tail = newTailNode;
+        snake.tail.next = currTail;
+
+        const newSnakeCells = new Set(snakeCells);
+        newSnakeCells.add(newTailCell);
+        setSnakeCells(newSnakeCells);
+    }
+
+    const handleGameOver = () =>{
+        setIsGameOver(true);
     }
 
     return (
         <div>
             <div className="score">
-                <h1>Score: {score}</h1>
+                <h1>{!isGameOver? `Score: ${score}` : 'Game Over'}</h1>
             </div>
             <div className="board">
             {
@@ -184,6 +214,46 @@ const getCoordsInDirection = (coords :ICoords, direction : string) =>{
         col : coords.col
     };
 };
+const getNextNodeDirection = (node:Node, currDirection: string) => {
+    if (node.next === null) return currDirection;
+    const {row: currRow, col: currCol} = node.val;
+    const {row: nextRow, col: nextCol} = node.next.val;
+
+    if(currRow == nextRow && currCol + 1 === nextCol){
+        return Direction.RIGHT;
+    }
+    if(currRow == nextRow && currCol - 1 === nextCol){
+        return Direction.LEFT;
+    }
+    if(currRow + 1 == nextRow && currCol === nextCol){
+        return Direction.DOWN;
+    }
+    if(currRow - 1 == nextRow && currCol - 1 === nextCol){
+        return Direction.UP;
+    }
+    return currDirection;   
+}
+const getGrowthCoords = (tail : Node, currDirection: string) => {
+    const nextTailDirection = getNextNodeDirection(tail, currDirection);
+    const growthDirection = getOppositeDirection(nextTailDirection);
+    const growthNodeCoords = getNewNodeCoords(tail,growthDirection);
+    return growthNodeCoords;
+}
+const getNewNodeCoords = (node: Node, growthDirection: string) =>{
+    const {row: currRow, col: currCol} = node.val;
+    if(growthDirection === Direction.UP) return {row: currRow -1, col: currCol};
+    if(growthDirection === Direction.DOWN) return {row: currRow +1, col: currCol};
+    if(growthDirection === Direction.LEFT) return {row: currRow, col: currCol - 1};
+    if(growthDirection === Direction.RIGHT) return {row: currRow -1, col: currCol + 1};
+    return {row: currRow, col: currCol};
+}
+const getOppositeDirection = (currDirection: string) => {
+    if(currDirection === Direction.UP) return Direction.DOWN;
+    if(currDirection === Direction.DOWN) return Direction.UP;
+    if(currDirection === Direction.LEFT) return Direction.RIGHT;
+    if(currDirection === Direction.RIGHT) return Direction.LEFT;
+    return currDirection;
+}
 
 const randomIntFromRange = (min: number, max:number)=>{
     return Math.floor(Math.random() * (max - min + 1) +min);
