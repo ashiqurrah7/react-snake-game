@@ -1,19 +1,48 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./board.css";
-import {
-  randomIntFromRange,
-  useInterval,
-  Node,
-  ICoords,
-  LinkedList,
-  Direction,
-  reverseLinkedList,
-} from "./utils";
 
 const BOARD_SIZE: number = 15;
 
+class Node {
+  val: IVal;
+  next: Node | null;
+
+  constructor(val: IVal) {
+    this.val = val;
+    this.next = null;
+  }
+}
+
+interface IVal {
+  row: number;
+  col: number;
+  cell: number;
+}
+
+interface ICoords {
+  row: number;
+  col: number;
+}
+
+class LinkedList {
+  head: Node;
+  tail: Node;
+  constructor(val: IVal) {
+    const node = new Node(val);
+    this.head = node;
+    this.tail = node;
+  }
+}
+
+enum Direction {
+  UP = "UP",
+  DOWN = "DOWN",
+  RIGHT = "RIGHT",
+  LEFT = "LEFT",
+}  
+
+
 export const Board = () => {
-  const timer = useRef(100000000);
   const [board, setboard] = useState(createBoard(BOARD_SIZE));
   const [snakeCells, setSnakeCells] = useState(new Set([106]));
   const [reverseFood, setReverseFood] = useState(false);
@@ -306,3 +335,41 @@ const getOppositeDirection = (currDirection: string) => {
   if (currDirection === Direction.RIGHT) return Direction.LEFT;
   return currDirection;
 };
+
+
+// utils.ts deleted due to problem in deployment
+
+function randomIntFromRange (min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
+
+function useInterval(callback : Function, delay : number){
+  const savedCallback = useRef<Function>();
+
+  useEffect(() => {
+      savedCallback.current = callback;
+  }, [callback]);
+
+  useEffect(()=>{
+      function tick(){
+          if(savedCallback.current) savedCallback.current();
+      }
+      if (delay !== null){
+          let id = setInterval(tick, delay);
+          return () => clearInterval(id);
+      }
+  },[delay]);
+}
+
+function reverseLinkedList(head: Node){
+  let prevNode = null;
+  let currNode = head;
+  while(currNode !== null){
+      const nextNode = currNode.next;
+      currNode.next = prevNode;
+      prevNode = currNode;
+      currNode = nextNode!;
+  }
+  return prevNode;
+}
