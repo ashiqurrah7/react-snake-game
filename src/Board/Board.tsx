@@ -13,6 +13,7 @@ import {
 const BOARD_SIZE: number = 15;
 
 export const Board = () => {
+  const timer = useRef(100000000);
   const [board, setboard] = useState(createBoard(BOARD_SIZE));
   const [snakeCells, setSnakeCells] = useState(new Set([106]));
   const [reverseFood, setReverseFood] = useState(false);
@@ -30,7 +31,17 @@ export const Board = () => {
     });
   }, []);
 
-  useInterval(moveSnake, 200);
+  useInterval(moveSnake, 150);
+
+  const handleRestart = () => {
+  setSnakeCells(new Set([106]));
+  setReverseFood(false);
+  setSnake(new LinkedList({ row: 7, col: 0, cell: 106 }));
+  setDirection(Direction.RIGHT);
+  setFoodCell(snake.head.val.cell + 5);
+  setScore(0);
+  setIsGameOver(false);
+  }
 
   const handleKeydown = (e: KeyboardEvent) => {
     const newDirection = getDirectionFromKey(e.key);
@@ -194,7 +205,7 @@ export const Board = () => {
         ))}
       </div>
       <div className="buttons">
-        <button onClick={moveSnake}> move</button>
+        <button onClick={handleRestart}> RESTART</button>
       </div>
     </div>
   );

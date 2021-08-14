@@ -34,6 +34,15 @@
     margin-top:10px;
     display:flex;
     justify-content:space-evenly;
+    
+}
+.buttons button{
+    border: 2px solid rgb(0, 195, 255);
+    background-color: transparent;
+    border-radius: 30px;
+    color: white;
+    height: 3em;
+    width: 7em;
 }
 
 .score{
