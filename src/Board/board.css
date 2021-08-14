@@ -10,11 +10,12 @@
 .cell{
     height: 3em;
     width: 3em;
-    border: 1px solid rgb(0, 195, 255);
+    /* border: 1px solid rgb(0, 195, 255); */
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: black;
+    font-weight: bolder;
 }
 
 .snake-cell{
@@ -23,6 +24,10 @@
 
 .food-cell{
     background-color: rgb(255, 32, 32);
+}
+
+.rev-food-cell{
+    background-color: rgb(99, 32, 255);
 }
 
 .buttons{
@@ -35,4 +40,39 @@
     color: aliceblue;
     text-align: center;
     font-family:'Comic Sans MS';
+}
+
+.head-up{
+    transform: rotate(90deg);
+    justify-content:flex-start;
+}
+.head-down{
+    transform: rotate(90deg);
+    justify-content:flex-end;
+}
+.head-right{
+    justify-content:flex-end;
+}
+.head-left{
+    justify-content:flex-start;
+}
+
+.space-right{
+    margin-top: 12px;
+    margin-right: 8px;
+}
+
+.space-left{
+    margin-left: 8px;
+    margin-top: 12px;
+}
+
+.space-up{
+    margin-top: 12px;
+    margin-left: 8px;
+}
+
+.space-down{
+    margin-top: 12px;
+    margin-right: 8px;
 }
