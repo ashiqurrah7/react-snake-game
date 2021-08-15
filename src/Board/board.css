@@ -37,18 +37,23 @@
     
 }
 .buttons button{
-    border: 2px solid rgb(0, 195, 255);
-    background-color: transparent;
-    border-radius: 30px;
+    border: 1px solid white;
+    background-color: grey;
+    font-family:'Press Start 2P','Comic Sans MS';
     color: white;
     height: 3em;
-    width: 7em;
+    width: 10em;
+}
+
+.buttons button:hover{
+    cursor: pointer;
+    background-color:darkgrey;
 }
 
 .score{
     color: aliceblue;
     text-align: center;
-    font-family:'Comic Sans MS';
+    font-family:'Press Start 2P','Comic Sans MS';
 }
 
 .head-up{
@@ -67,21 +72,63 @@
 }
 
 .space-right{
-    margin-top: 12px;
+    margin-top: 10px;
     margin-right: 8px;
 }
 
 .space-left{
     margin-left: 8px;
-    margin-top: 12px;
+    margin-top: 10px;
 }
 
 .space-up{
-    margin-top: 12px;
+    margin-top: 10px;
     margin-left: 8px;
 }
 
 .space-down{
-    margin-top: 12px;
+    margin-top: 10px;
     margin-right: 8px;
+}
+
+.instructions{
+    position: absolute;
+    left: 2%;
+    height: 30em;
+    width: 25em;
+    padding: 2em;
+}
+
+.instructions h1{
+    font-family:'Press Start 2P', 'Comic Sans MS';
+    color: white;
+}
+
+.instructions div{
+    font-family:'Press Start 2P', 'Comic Sans MS';
+    color: white;
+}
+
+.controls{
+    display: flex;
+    align-items: center;
+}
+
+.instructions p{
+    border: 1px solid white;
+    font-family:'Press Start 2P', 'Comic Sans MS';
+    color: white;
+    width: max-content;
+    padding: 1em;
+    margin-right: 1em;
+}
+
+.note{
+    margin-top: 1em;
+}
+
+.note span{
+    height: 0.6em;
+    width: 0.6em;
+    background-color: rgb(99, 32, 255);
 }
