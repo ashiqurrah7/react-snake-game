@@ -49,14 +49,14 @@ export const Board = () => {
   const [snake, setSnake] = useState(
     new LinkedList({ row: 7, col: 0, cell: 106 })
   );
-  const [direction, setDirection] = useState<string>(Direction.RIGHT);
-  const [foodCell, setFoodCell] = useState(snake.head.val.cell + 5);
+  const direction = useRef<string>(Direction.RIGHT);
+  const [foodCell, setFoodCell] = useState(randomIntFromRange(1, BOARD_SIZE*BOARD_SIZE));
   const [score, setScore] = useState(0);
-  const [isGameOver, setIsGameOver] = useState(false);
+  const isGameOver = useRef(false);
 
   useEffect(() => {
     window.addEventListener("keydown", (e) => {
-      handleKeydown(e);
+      if(!isGameOver.current) handleKeydown(e);
     });
   }, []);
 
@@ -66,10 +66,10 @@ export const Board = () => {
   setSnakeCells(new Set([106]));
   setReverseFood(false);
   setSnake(new LinkedList({ row: 7, col: 0, cell: 106 }));
-  setDirection(Direction.RIGHT);
-  setFoodCell(snake.head.val.cell + 5);
+  direction.current = Direction.RIGHT;
+  setFoodCell(randomIntFromRange(1, BOARD_SIZE*BOARD_SIZE));
   setScore(0);
-  setIsGameOver(false);
+  isGameOver.current = false;
   }
   
   
@@ -77,10 +77,10 @@ export const Board = () => {
     const newDirection = getDirectionFromKey(e.key);
     const isValidDirection = newDirection !== "";
     if (!isValidDirection) return;
-    console.log(direction);
-    // const willSnakeEatSelf = (getOppositeDirection(getDirection()) === newDirection);
-    // if (willSnakeEatSelf) return;
-    setDirection(newDirection);
+    console.log(direction.current);
+    const willSnakeEatSelf = (getOppositeDirection(direction.current) === newDirection);
+    if (willSnakeEatSelf) return;
+    direction.current = newDirection;
   };
 
   const handleFoodConsumption = (newSnakeCells: Set<number>) => {
@@ -106,7 +106,7 @@ export const Board = () => {
     return false;
   };
   function moveSnake() {
-    if(!isGameOver){
+    if(!isGameOver.current){
       const currentHeadCoords = {
         row: snake.head.val.row,
         col: snake.head.val.col,
@@ -114,7 +114,7 @@ export const Board = () => {
   
     
   
-      const nextHeadCoords = getCoordsInDirection(currentHeadCoords, direction);
+      const nextHeadCoords = getCoordsInDirection(currentHeadCoords, direction.current);
       if (isOutOfBounds(nextHeadCoords, board)) {
         handleGameOver();
         return;
@@ -154,7 +154,7 @@ export const Board = () => {
   }
 
   const growSnake = (newSnakeCells: Set<number>) => {
-    const growthCoords = getGrowthCoords(snake.tail, direction);
+    const growthCoords = getGrowthCoords(snake.tail, direction.current);
     if (isOutOfBounds(growthCoords, board)) {
       return;
     }
@@ -174,7 +174,7 @@ export const Board = () => {
   };
 
   const reverseSnake = () => {
-    const nextTailDirection = getNextNodeDirection(snake.tail, direction);
+    const nextTailDirection = getNextNodeDirection(snake.tail, direction.current);
     const newDirection = getOppositeDirection(nextTailDirection);
 
     reverseLinkedList(snake.tail);
@@ -182,17 +182,17 @@ export const Board = () => {
     snake.head = snake.tail;
     snake.tail = snakeHead;
 
-    setDirection(newDirection);
+    direction.current = newDirection;
   };
 
   const handleGameOver = () => {
-    setIsGameOver(true);
+    isGameOver.current = true;
   };
 
   return (
     <div>
       <div className="score">
-        <h1>{!isGameOver ? `Score: ${score}` : "Game Over"}</h1>
+        <h1>{!isGameOver.current ? `Score: ${score}` : "Game Over"}</h1>
       </div>
       <div className="instructions">
         <h1>Controls: </h1>
@@ -218,25 +218,25 @@ export const Board = () => {
                                 : ""
                             }
                             ${
-                              direction === Direction.RIGHT
+                              direction.current === Direction.RIGHT
                                 ? "head-right"
-                                : direction === Direction.LEFT
+                                : direction.current === Direction.LEFT
                                 ? "head-left"
-                                : direction === Direction.UP
+                                : direction.current === Direction.UP
                                 ? "head-up"
-                                : direction === Direction.DOWN
+                                : direction.current === Direction.DOWN
                                 ? "head-down"
                                 : ""
                             }`}
               >
                 <h1 className= {`${
-                              direction === Direction.RIGHT
+                              direction.current === Direction.RIGHT
                                 ? "space-right"
-                                : direction === Direction.LEFT
+                                : direction.current === Direction.LEFT
                                 ? "space-left"
-                                : direction === Direction.UP
+                                : direction.current === Direction.UP
                                 ? "space-up"
-                                : direction === Direction.DOWN
+                                : direction.current === Direction.DOWN
                                 ? "space-down"
                                 : ""
                             }`}>{snake.head.val.cell == cellValue ? ":" : ""}</h1>
