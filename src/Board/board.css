@@ -98,7 +98,17 @@
     width: 25em;
     padding: 2em;
 }
+.gameOver{
+    position: absolute;
+    right: 10%;
+    top: 50%;
+    bottom: 50%;
+}
 
+.gameOver h1{
+    font-family:'Press Start 2P', 'Comic Sans MS';
+    color: white;
+}
 .instructions h1{
     font-family:'Press Start 2P', 'Comic Sans MS';
     color: white;

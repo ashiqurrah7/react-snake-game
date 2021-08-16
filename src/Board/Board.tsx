@@ -53,6 +53,7 @@ export const Board = () => {
   const [foodCell, setFoodCell] = useState(randomIntFromRange(1, BOARD_SIZE*BOARD_SIZE));
   const [score, setScore] = useState(0);
   const isGameOver = useRef(false);
+  const [gameState, setGameState] = useState(false);
 
   useEffect(() => {
     window.addEventListener("keydown", (e) => {
@@ -70,6 +71,7 @@ export const Board = () => {
   setFoodCell(randomIntFromRange(1, BOARD_SIZE*BOARD_SIZE));
   setScore(0);
   isGameOver.current = false;
+  setGameState(false);
   }
   
   
@@ -187,12 +189,13 @@ export const Board = () => {
 
   const handleGameOver = () => {
     isGameOver.current = true;
+    setGameState(true);
   };
 
   return (
     <div>
       <div className="score">
-        <h1>{!isGameOver.current ? `Score: ${score}` : "Game Over"}</h1>
+        <h1>{`Score: ${score}`}</h1>
       </div>
       <div className="instructions">
         <h1>Controls: </h1>
@@ -202,6 +205,9 @@ export const Board = () => {
         <div className="controls"><p>D</p> Go Right</div>
         <div className="note">Note: Careful when eating the <span>&nbsp;</span> because it makes you go reverse!</div>
       </div>
+      {gameState ? <div className="gameOver">
+        <h1>GAME OVER!!</h1>
+      </div> : ""}
       <div className="board">
         {board.map((row, rowIdx) => (
           <div key={rowIdx} className="row">
